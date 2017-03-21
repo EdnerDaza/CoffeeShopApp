@@ -2,8 +2,6 @@ package co.com.ednerdaza.coffeeshopapp;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -18,4 +16,5 @@ public class CoffeeMenuActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         coffeeShopView = new CoffeeMenuView(this,null);
     }
+
 }
