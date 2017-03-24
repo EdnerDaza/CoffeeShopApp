@@ -2,12 +2,18 @@ package co.com.ednerdaza.coffeeshopapp;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class CoffeeMenuActivity extends AppCompatActivity {
 
@@ -18,7 +24,13 @@ public class CoffeeMenuActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.coffee_menu_activity);
         ButterKnife.bind(this);
-        coffeeShopView.show(coffeeList());
+        //coffeeShopView.show(coffeeList());
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        getRetrofitArray();
     }
 
     private List<Coffee> coffeeList() {
@@ -42,5 +54,36 @@ public class CoffeeMenuActivity extends AppCompatActivity {
             coffeeList.add(new Coffee("Guardians of the Galaxy", "Science Fiction & Fantasy", "2014"));
             return coffeeList;
           }
+
+    void getRetrofitArray() {
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("http://demo2304167.mockable.io/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        RetrofitArrayAPI service = retrofit.create(RetrofitArrayAPI.class);
+
+        Call<List<Coffee>> call = service.getCoffeeList();
+
+        call.enqueue(new Callback<List<Coffee>>() {
+            @Override
+            public void onResponse(Call<List<Coffee>> call, Response<List<Coffee>> response) {
+                try {
+                    List<Coffee> CoffeeData = response.body();
+                    coffeeShopView.show(CoffeeData);
+                    Log.v("onResponse",CoffeeData.toString());
+                }catch (Exception e) {
+                    Log.v("onResponse", "There is an error");
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Coffee>> call, Throwable t) {
+                Log.d("onFailure", t.toString());
+            }
+        });
+    }
 
 }
